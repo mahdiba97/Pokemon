@@ -66,6 +66,10 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.compose.material:material-icons-core:$compose_version"
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01"
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha10"
     //end region
 
 
@@ -99,7 +103,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-coil:0.7.0"
     //end region
 
-    
+
     implementation "androidx.palette:palette-ktx:1.0.0"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 }
