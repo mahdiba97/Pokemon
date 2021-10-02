@@ -1,13 +1,9 @@
 package com.mahdiba97.pokemon
 
-object Constants {
-    const val BASE_URL = "https://pokeapi.co/api/v2/"
+const val BASE_URL = "https://pokeapi.co/api/v2/"
 
-    const val POKEMON_LIST_SCREEN = "pokemon_list_screen"
-    const val POKEMON_DETAIL_SCREEN = "pokemon_detail_screen"
+const val POKEMON_LIST_SCREEN = "pokemon_list_screen"
+const val POKEMON_DETAIL_SCREEN = "pokemon_detail_screen"
 
-    const val ARG_DOMINANT_COLOR = "dominant_color"
-    const val ARG_POKEMON_NAME = "pokemon_name"
-
-
-}
+const val ARG_DOMINANT_COLOR = "dominant_color"
+const val ARG_POKEMON_NAME = "pokemon_name"

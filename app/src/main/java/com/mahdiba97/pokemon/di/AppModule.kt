@@ -1,6 +1,6 @@
 package com.mahdiba97.pokemon.di
 
-import com.mahdiba97.pokemon.Constants.BASE_URL
+import com.mahdiba97.pokemon.BASE_URL
 import com.mahdiba97.pokemon.data.remote.PokeService
 import com.mahdiba97.pokemon.repository.PokemonRepository
 import dagger.Module
