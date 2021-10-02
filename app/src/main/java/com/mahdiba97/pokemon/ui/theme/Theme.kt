@@ -5,17 +5,26 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = yellow500,
+    primaryVariant = yellow700,
+    secondary = blue200,
+    onBackground = Color.White,
+    background = Color(0xff101010),
+    surface = Color(0xff303030),
+    onSurface = Color.White
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = blue500,
+    primaryVariant = yellow700,
+    secondary = blue200,
+    onBackground = Color.Black,
+    background = Color.Cyan,
+    surface = Color.White,
+    onSurface = Color.White
 
     /* Other default colors to override
     background = Color.White,
@@ -39,6 +48,6 @@ fun PokemonTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
         colors = colors,
         typography = Typography,
         shapes = Shapes,
-        content = content
+        content = content,
     )
 }
