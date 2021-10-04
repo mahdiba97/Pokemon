@@ -3,7 +3,6 @@ package com.mahdiba97.pokemon.ui.pokemonList
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
-    val repository: PokemonRepository
+    private val repository: PokemonRepository
 ) : ViewModel() {
 
     private var currentPage = 0
