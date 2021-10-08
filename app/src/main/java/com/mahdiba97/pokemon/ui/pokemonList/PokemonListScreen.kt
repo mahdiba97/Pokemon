@@ -37,7 +37,8 @@ import com.mahdiba97.pokemon.data.models.PokemonListEntry
 
 @Composable
 fun PokemonListScreen(
-    navController: NavController
+    navController: NavController,
+viewModel: PokemonListViewModel = hiltViewModel()
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -57,7 +58,7 @@ fun PokemonListScreen(
                     .padding(32.dp),
                 hint = "Search..."
             ) {
-
+viewModel.searchPokemon(it)
             }
             Spacer(modifier = Modifier.height(16.dp))
             PokemonRecycler(navController = navController)
@@ -68,8 +69,7 @@ fun PokemonListScreen(
 @Composable
 fun Searchbar(
     modifier: Modifier = Modifier,
-    hint: String = "", onSearch: (String) -> Unit = {}
-) {
+    hint: String = "", onSearch: (String) -> Unit = {}) {
     var text by remember {
         mutableStateOf("")
     }
@@ -90,7 +90,7 @@ fun Searchbar(
                 .background(Color.White, CircleShape)
                 .padding(horizontal = 20.dp, vertical = 12.dp)
                 .onFocusChanged {
-                    isHintDisplayed = it.isFocused == false
+                    isHintDisplayed = it.isFocused == false && text.isNotEmpty()
                 }
         )
         if (isHintDisplayed and text.isEmpty()) {
@@ -109,15 +109,16 @@ fun PokemonRecycler(
     viewModel: PokemonListViewModel = hiltViewModel()
 ) {
     val pokemonList by remember { viewModel.pokemonList }
-    var loadError by remember { viewModel.loadError }
-    var isLoading by remember { viewModel.isLoading }
+    val loadError by remember { viewModel.loadError }
+    val isLoading by remember { viewModel.isLoading }
     val endReach by remember { viewModel.endReached }
+    val isSearching by remember { viewModel.isSearching }
     LazyColumn(contentPadding = PaddingValues(16.dp)) {
         val itemCount = if (pokemonList.size % 2 == 0) {
             pokemonList.size / 2
         } else pokemonList.size / 2 + 1
         items(itemCount) {
-            if (it >= itemCount - 1 && !endReach && !isLoading) {
+            if (it >= itemCount - 1 && !endReach && !isLoading && !isSearching) {
                 viewModel.loadPokemonPaginated()
             }
             PokemonRow(rowIndex = it, entries = pokemonList, navController = navController)

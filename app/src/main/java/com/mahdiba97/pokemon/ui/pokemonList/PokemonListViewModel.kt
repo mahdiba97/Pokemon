@@ -13,8 +13,8 @@ import com.mahdiba97.pokemon.data.models.PokemonListEntry
 import com.mahdiba97.pokemon.repository.PokemonRepository
 import com.mahdiba97.pokemon.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,10 +28,41 @@ class PokemonListViewModel @Inject constructor(
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
 
+    private var cachedPokemonList = listOf<PokemonListEntry>()
+    private var isSearchStarting =
+        true //it means searchField is empty, just about to start to search
+    var isSearching =
+        mutableStateOf(false) //if searchField contains something the value will be true
+
     init {
         loadPokemonPaginated()
     }
 
+    fun searchPokemon(query: String) {
+        val listToSearch = if (isSearchStarting) {
+            pokemonList.value
+        } else {
+            cachedPokemonList
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            if (query.isEmpty()) {
+                pokemonList.value = cachedPokemonList
+                isSearching.value = false
+                isSearchStarting = true
+                return@launch
+            }
+            val result = listToSearch.filter {
+                it.name.contains(query.trim(), ignoreCase = true) || it.number.toString()
+                    .contains(query.trim())
+            }
+            if (isSearchStarting) {
+                cachedPokemonList = pokemonList.value
+                isSearchStarting = false
+            }
+            pokemonList.value = result
+            isSearching.value  = true
+        }
+    }
 
     fun loadPokemonPaginated() {
         viewModelScope.launch {
@@ -48,7 +79,11 @@ class PokemonListViewModel @Inject constructor(
                         val url =
                             "https://raw.githubusercontent.com/pokeapi/sprites/master/sprites/pokemon/${number}.png"
 //                        Log.i("MyTag", url)
-                        PokemonListEntry(entry.name.capitalize(Locale.ROOT), url, number.toInt())
+                        PokemonListEntry(
+                            entry.name.replaceFirstChar { it.titlecase() },
+                            url,
+                            number.toInt()
+                        )
                     }
                     currentPage++
                     isLoading.value = false
