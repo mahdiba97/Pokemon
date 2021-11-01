@@ -1,6 +1,8 @@
 package com.mahdiba97.pokemon.di
 
 import com.mahdiba97.pokemon.BASE_URL
+import com.mahdiba97.pokemon.coroutine.DispatcherProvider
+import com.mahdiba97.pokemon.coroutine.StandardDispatchers
 import com.mahdiba97.pokemon.data.remote.PokeService
 import com.mahdiba97.pokemon.repository.PokemonRepository
 import dagger.Module
@@ -24,5 +26,11 @@ object AppModule {
     fun providePokeService(): PokeService {
         return Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL).build().create(PokeService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDispatcherProvider(): DispatcherProvider {
+        return StandardDispatchers()
     }
 }

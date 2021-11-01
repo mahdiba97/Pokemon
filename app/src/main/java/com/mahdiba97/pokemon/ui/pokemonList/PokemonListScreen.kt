@@ -9,18 +9,26 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +46,7 @@ import com.mahdiba97.pokemon.data.models.PokemonListEntry
 @Composable
 fun PokemonListScreen(
     navController: NavController,
-viewModel: PokemonListViewModel = hiltViewModel()
+    viewModel: PokemonListViewModel = hiltViewModel()
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -58,7 +66,7 @@ viewModel: PokemonListViewModel = hiltViewModel()
                     .padding(32.dp),
                 hint = "Search..."
             ) {
-viewModel.searchPokemon(it)
+                viewModel.searchPokemon(it)
             }
             Spacer(modifier = Modifier.height(16.dp))
             PokemonRecycler(navController = navController)
@@ -69,13 +77,22 @@ viewModel.searchPokemon(it)
 @Composable
 fun Searchbar(
     modifier: Modifier = Modifier,
-    hint: String = "", onSearch: (String) -> Unit = {}) {
+    hint: String, onSearch: (String) -> Unit = {}
+) {
     var text by remember {
         mutableStateOf("")
     }
     var isHintDisplayed by remember {
-        mutableStateOf(hint != "")
+        mutableStateOf(true)
     }
+
+    var itClose by remember {
+        mutableStateOf(false)
+    }
+    val focusRequest = remember {
+        FocusRequester()
+    }
+    val focusManager = LocalFocusManager.current
     Box(modifier = modifier) {
         BasicTextField(
             value = text, onValueChange = {
@@ -90,14 +107,46 @@ fun Searchbar(
                 .background(Color.White, CircleShape)
                 .padding(horizontal = 20.dp, vertical = 12.dp)
                 .onFocusChanged {
-                    isHintDisplayed = it.isFocused == false && text.isNotEmpty()
+                    isHintDisplayed = it.isFocused == false && text.isEmpty()
+                    itClose = isHintDisplayed == false
+
                 }
+                .focusRequester(focusRequest)
         )
-        if (isHintDisplayed and text.isEmpty()) {
-            Text(
-                text = hint,
-                color = Color.LightGray,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+        if (isHintDisplayed) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                    tint = Color.LightGray,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(horizontal = 8.dp)
+                )
+                Text(
+                    text = hint,
+                    color = Color.LightGray,
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+            }
+        } else if (itClose) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = null,
+                tint = Color.LightGray,
+                modifier = Modifier
+                    .align(CenterEnd)
+                    .padding(horizontal = 8.dp)
+                    .clickable {
+                        itClose = false
+                        isHintDisplayed = true
+                        text = ""
+                        onSearch("")
+                        focusManager.clearFocus(true)
+                    }
             )
         }
     }

@@ -9,17 +9,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import com.mahdiba97.pokemon.PAGE_SIZE
+import com.mahdiba97.pokemon.coroutine.DispatcherProvider
 import com.mahdiba97.pokemon.data.models.PokemonListEntry
 import com.mahdiba97.pokemon.repository.PokemonRepository
 import com.mahdiba97.pokemon.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
-    private val repository: PokemonRepository
+    private val repository: PokemonRepository,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     private var currentPage = 0
@@ -44,7 +45,7 @@ class PokemonListViewModel @Inject constructor(
         } else {
             cachedPokemonList
         }
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(dispatchers.default) {
             if (query.isEmpty()) {
                 pokemonList.value = cachedPokemonList
                 isSearching.value = false
@@ -60,7 +61,7 @@ class PokemonListViewModel @Inject constructor(
                 isSearchStarting = false
             }
             pokemonList.value = result
-            isSearching.value  = true
+            isSearching.value = true
         }
     }
 
